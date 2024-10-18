@@ -20,6 +20,7 @@ export function StoreProvider({children}: PropsWithChildren<any>){
     const [basket, setBasket] = useState<Basket| null>(null);
     function removeItem(productId:number, quantity:number){
         if(!basket) return;
+        console.log('in removeItem in context');
         const items = [...basket.items];
         const itemIndex = items.findIndex(i => i.productId === productId);
         if(itemIndex >= 0){
