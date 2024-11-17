@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpGet(Name ="GetBasket")]
         public async Task<ActionResult<BasketDto>> GetBasket(){
             var basket = await RetreiveBasket();
-            if(basket == null)return NotFound();
+            if(basket == null) return NotFound();
             return MapBasketToDto(basket);
 
         }
