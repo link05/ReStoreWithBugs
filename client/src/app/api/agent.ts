@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { router } from '../router/routes';
+import { PaginatedResponse } from '../models/pagination';
 
 const sleep = () => new Promise(resolve => setTimeout(resolve, 500));
 
@@ -10,6 +11,16 @@ const responseBody = (response: AxiosResponse) => response.data;
 
 axios.interceptors.response.use(async response => {
     await sleep();
+    console.log('resonse');
+    console.log(response);
+    console.log(response.headers);
+    const pagination = response.headers['pagination'];
+    console.log('pagination');
+    console.log(pagination);
+    if(pagination){
+        response.data = new PaginatedResponse(response.data, JSON.parse(pagination));
+        return response;
+    }
     return response;
 
 }, (error:AxiosError) => {
@@ -45,7 +56,7 @@ axios.interceptors.response.use(async response => {
     return Promise.reject(error);
 })
 const requests = {
-    get: (url:string) => axios.get(url).then(responseBody),
+    get: (url:string, params?: URLSearchParams) => axios.get(url, {params}).then(responseBody),
     post: (url:string, body:{}) => axios.post(url, body).then(responseBody),
     put: (url:string, body:{}) => axios.put(url, body).then(responseBody),
     delete: (url:string) => axios.delete(url).then(responseBody),
@@ -53,8 +64,9 @@ const requests = {
 
 
 const Catalog = {
-    list:() => requests.get('products'),
-    details: (id:number) => requests.get(`products/${id}`)
+    list:(params:URLSearchParams) => requests.get('products',params),
+    details: (id:number) => requests.get(`products/${id}`),
+    fetchFilters: () => requests.get('products/filters')
 }
 
 const TestErrors = {
@@ -66,7 +78,7 @@ const TestErrors = {
 }
 const Basket = {
     get: () => requests.get('basket'),
-    addItem:(productId:number, quantity=1) => requests.post(`basket?productId=${productId}&quantity=${quantity}`,{}),
+    addItem:(productId:number, quantity=1) => requests.post(`basket?productId=100${productId}&quantity=${quantity}`,{}),
     removeItem:(productId:number, quantity=1) => requests.delete(`basket?productId=${productId}&quantity=${quantity}`),
 }
 
