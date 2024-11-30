@@ -82,10 +82,21 @@ const Basket = {
     removeItem:(productId:number, quantity=1) => requests.delete(`basket?productId=${productId}&quantity=${quantity}`),
 }
 
+const Account = {
+    login: (values: any) => {
+        console.log('values in post call');
+        console.log(values);
+        return requests.post('account/login',values)
+    },
+    register: (values: any) => requests.post('account/register',values),
+    currentUser: (values: any) => requests.get('account/currentUser',values),
+};
+
 const agent = {
     Catalog,
     TestErrors,
-    Basket 
+    Basket,
+    Account
 }
 
 export default agent;
